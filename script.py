@@ -8,11 +8,21 @@ cookies = {
     "visitorId_current": "3755893760"
 }
 
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9,fr;q=0.8,ar;q=0.7",
+    "Referer": "https://algeria.blsspainglobal.com/",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+}
+
 url = "https://algeria.blsspainglobal.com/DZA/Bls/DoorstepForm?data=jGXVePEEnGHbQ7or54PE2gTGNteC2SFNKiG75D6xihL95QxOiXyJtV%2BskgdVaNVJAN5TxPxMN2O8LAoGDNnCG2jyV%2BxNN1hjlUekjDCFCiCkUWHqU1V05w%2FhhQ98Lk8cJov7PtQ%2BP85MBRMcNfgOGGnRY%2F3sGUna0cYnbSKH7nQds1xjkO61bR1vZ3sksitYuoqpa39keraLxFhPcoGszg%3D%3D"
 
-resp = requests.get(url, cookies=cookies)
+resp = requests.get(url, cookies=cookies, headers=headers)
 
 print("Status:", resp.status_code)
 print("URL النهائي:", resp.url)
 print("------ HTML Response ------")
-print(resp.text[:1000])  # نطبع أول 1000 كاراكتر فقط باش ما يتقلش
+print(resp.text[:1000])
+
