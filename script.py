@@ -1,28 +1,57 @@
 import requests
+import time
 
 # ضع الكوكيز هنا
 cookies = {
-    "aws-waf-token": "d475c7fa-90da-45b4-8a16-96e24b255537:CQoAay0152cNAgAA:IYK5bI2p74d3Fo88o0gEgUOcccFD0qyko46pL4LT/qVA7wpO5wh667TToh/969exi28Ne1yAd8eoKpChN1jAF6GVlLwYTGsJyHF/EL4d3RmPMJzkwsnR/WJJu5yoiQ3Bv6u5T8G4kkBN20jdYcUji/w6GmRK0WwulhkB//v8E7uRufGQje0pGpeiybTkU3njM7qF/Z3OjAjoJqzqEAW2RsqDOm26p2ZKKTBALI47hT3TUUrJBoiiyE8EtJvWF752sgL3xn72HRI8lay1D2nQJmo=",
-    ".AspNetCore.Cookies": "CfDJ8HR2AoMI3LpApkZfZPiNaibWAqdEVDRL5hzUvbyBSAcV9lV4IylsDn8v-QY5NNTBHxDNIgrAGg_84D4R9Udg52sOrzT8cEZ8VH6T5-bGjSSyjVZqkJdIoMwg31Y--Cn_DUDgHPRVYW_v9l0meq7aLinJapqIPHtfzimR8MdKw4VT18LY7VsUA1iGzX2QA4Hlgcpn7mha6pPIMnFlalcU7pOLitSNoUATlxW0BqhgdQDn-CKYFeDw_FV6b5FXs8_ysx3mXpFdYezC5HosIobNX1T1nL2xwm1NYktt1eQoGQdiPiLfmNMlMD5RkxekVPSaVxIzayKCITnDRIxsODE3-9FwyM8VbzCsr1UanEsIIHTUlGZsZIFhAzUDj3EJwZwulPPPXm1WhGRQPjCn0IY-ytqYcDxOXwm8d4AHy0fEPlUxB410neSeXFCrO5lgyFxhhE1Cef-iYl-WeLsFj2A8__2T6NDkOXh06_otqD8iSujffkRNqhJz2dxGJSQPpesNjZNOMwIYCv52zT1-scxvprCQGW1Tp7xtke3rFNnq5IWDuns7nmO6m4P_phPjr7ZG7E8FlTfmZIY5uAYEB-j0mh_aVQkdamX8YATc1fd1j1BbieiOb09yM8Bj_BufiuCGlZojdZRDoyIrC065tUZiQgFLoZTog8y8wUgugk2odWlymFN_MhbmPd8DEgelBQ7fBh5QSoJXDd8GFBQv0tb_ZdVGrida-cWArPEgKPsR3tEgns-FWmTl1hsazKWmUMDc0ACKHONpObI-FRzVo__U1hOEybnqS-mYFJOilRHyCxMs3QiLSQZrg5VBFbYnaSEaFXhc8d_SGMxwWQHT0y_Eky9mZ7whwJvicOnP0UmdDk7TNH0WnfTM4EfqaIFMSbWiq-tsyFTKlfOoGEdjV9C2trAGviBNinkm3p3BafMgF0945IGZxzKHOWgzhKIzhueeG2tsHIZb1RVLCq6q4tv-42LKsFR5qaCbXen-zIbKJX6htKt1HwnZajLWp9lRIt4nbcfbfngXwMH5JWErFasWAWBr3ujtzDw7ESD6Rq1kO5wkEDiZnBm6UuVeuAp0mdhPVbreQmqACcvvsuDLPacQD8uUp3FpUKYsLFb_e_BU-y6KXVyfJG8fmwSonI-HHInRxZRy8whuDXuUsuJ3TxT6XubWYNJJBM6FkIO05guRkvDTiJLcxlepH5VXaMV3LOk-5zHqlxIorS0AdPGkZQkO0gkfYgMK6409VBlr8bl9zQP_f-A7Q3Hetrmog7DBQE9iCpdCJcFpxKarjZgX5isfw0Lt4qF5KllolzNH_YfvvNAkfLVAp1v2Fx-R-u4YFkEEM9dHix_BOfvsZJk_bfM5FYF1YoAsSnMF9LfGiS-dFE8hTQYVXP9mBETUezc3LjgwKD0VaWfROx-9j_V5GYJg9M9p_7rWTe_JwmL8Fx7cNcz99d3w1HoeQhcBIR26dLXpXucd6OvmJLB5xuXv4uOMElfsZpUfNXwAFGbA0OMyO24uAINYW4-NI1EWmCbK8D0sxnAHtSidQ_AGXY7Ff6Mzn1_gp3-ebKsdrjMeFluDmq48hkA6D0oud8Td4edY5HrVonSI9LyA6uy7yUEyOiRVHgf5D7i5vMhOhf3yNAi5DHnK5fyZ2pLUbjBdcpyujMGDRv1zH9lgV8EIZHftio8kQooeTFGsY8rqePlbDHhSBncwh1H8qVdmTkLDJ6T7Q-tTl2ZkqCNx3pD4-HO0KWRLn5kTQoGYN-JXOlaNQFzWIjVclnF6xxbHxAoXDaHeXWmRO4AJl37TpWUp9Unw_nymhzyo_rvPvjOADN42vosNgaodZlOWmKk7jRDqLRQjYRG7KGxYo-tQ64_NTcZp-beymKCK1b1ErGLyTcXQFuqkU_6dGtfQO634-0JL4RHW4dG9ssCSTSlxzSRZLcaTAMKwpOs43G_CYf-zzV0T5jpDCorNZ7HSfPba9ETQN9Yc0rLKY51pGhuL_4BAynHp7N32c61pA8LHyPYwgKOINqa9YXRv8DiBLZDDwKCeS5k9mRQxJtcUg87zCaKGO-UrjIWP_IVa0DD3eUNqJ3O8gkR6RPtbKphdtmAz3YuEInsb3qfcKDUeET30Lc5njchfx2RZLgclUDZhUd_CSnPsQWpS7Scljie6ovLiPbypNmYwZu15XcLCuXDS1oYPL2AXLYFi72TNbuwUZ-ZzvsU0q1CmegJY4pWOPOyNXtD9XHmUQ8ULu7apeUhviJfZYZELhIGtIgaXYal3empkgGep1ZqnGPeU-HSg6458awnErb8sNyffRyLAY36g-1VIx8OIFbNwOLoqJaI4zvGdJerwPKFdwjPRGgHO1MKtTXUtCHJc6JhJFOiZsyjLabyUBa9W9i6IrcFUiaEvC4Th2UA9GzoZDq9PjdTE7eQykditBRkaU77ilcC5GXGytVQ2OqSgaDt4p_Y6PWP-rT2vKfGy_3tHLmIX8cvR0RRGuUuLtndBThk8RpvOXoELJGKOiEWOIxWSy7Zli9RtdyN8pfRmuK8gu64Md0tnjNDgjrF-_7QWYwEKhHW4OYaTm2wdFjCLrrCDgU55GTgU0ldltem9CUdKfAr03rKbA7IRh6ej_ne8B6yraQ7I3og0lfKk0hnPf7VqRbS9O7lrvamUXxVahuYbo4o6uEgCrK92PC00e6Q8qngOTRWQ92cSdi1ygUAD6iuOPJjHyUJ4XRdTvRe1M830M50moRnKRB3Y-mYzpjtuC6GLGojYY8kNsr8zpwU8vyR1rtMwq20pUmXobzh8T4Xtv_hZvghH-NQ9oSokNPl8-s82i1Xtl16uZRi-UQ5jgDg5WuzdaJC_vEnUz4mUCwpiMrcqQ4CYJdULh1-uoM3guVsepBk1j7n1xSr1S_dmYr8aq0q_vp8fmqSdTKUraL76fc6zUp3cWH5Pph_EPCCFH4In_cauJE4sLB_hmTLHURXSeh-L4FLz_lbuG1AUHi818qJ7Nc86yhOymxJZcnnHM1SQuNEaHmvz2pU1QGQ0CaZs7hN-5k6PFHIMjyIKGTjluPIz",
+    "aws-waf-token": "d475c7fa-90da-45b4-8a16-96e24b255537:CQoAgfdcYd0uAgAA:doq402m/LgLuS5ER6UbHEeg8Fdox54NWbYDySLmnvVAcLZ4msYx36P3a4shqqqCXavWOEngnBRsGJNJRwEbFHJt1ZEMd2+9GaFLQTS7Bjk9lpNWgh9LH1pzqCyIEbKeFgoTdp7mDMo+8qgp7l+OTk9wemUK3utek9vMaWbYGsW+LsVHltV1CdmCHisr0VcugE/VpBw0akDmGMtQTicreQBKsaSTeil9sI4BSW+0fDnTYjZxVohpdWjIiinBaOWt5dCcNd65TtzwhODoOYHiBr6E=",
+    ".AspNetCore.Cookies": "CfDJ8HR2AoMI3LpApkZfZPiNaiaU-HFDIMsJuBsJgV-x7qtIcv8QR_vpPguDEzSi1z8hR8zty_bMIfFQYcItCXcmnA5P4mn9I81DE5NMluYf7BRzRikhbeFmqIlx7VWlRQppCe2nq_jRC1dSYTi_0VW_Tlgk5wWqmvHIlzwhwjdhH3jNYqSenforoYIogrCN2zkHCbIA-STO8FotqqLQ5IapD6TYr47gBuszm-8be-FpF8KinN85dIm6iJsTPTyiswxSqwMrbTDRvHX3oto3U7YYvzE6dm0mMmPQNpNpWew4nXYDkAvDjXhqUtlYxjjs0DJkaymAnf5QZ7z-n6xD60TUCOAtiqYhU6Ef8JFn337_xH7QYh4JQtIysvX6Mv3GYf48nfIuDj-1ZVPAlVjChMTsZVEHfdlNBdlUcplTI8wPMJzKJMon5U04BA7swNCBQmQs8Zsp_EG6XayFe5ycuIo6yE7jkOrhZuphMko8pDXlgvyH4SwzPICFtoJLkgCRSWoxfu_SztzEstAOlWPmVGkdSAtFHL_8wka3zQ-4PCjGta5k_3GLHLEK18w3M3lDeyhgG5kF6CfNt0VtH5ULycb8Mbdlt9JfZp1yoaUuZj428rUbKEd2Dhmd5heZdofj2_IKUViaA4CnWyyeiPkfVEJga3oMwBcTDXH5ir0_z12b3oPKYZeR4sVmnLVIUgAyFkj4up7eyJhR0AdYARNIerc3RYarmKAC_VNFakJPz5yS9xgjX37ezIiqdhsLze37EyhoJhx993SnOMBSpqnQHeBtlVs4iIBJMJmSaPVzkpj0Co9bUqhKR_cGfZG9qNTxR6R2T0Y-JHYKLOj0BlqGlubPnT2Ig_pc9OtBx4GmrC48_5Ce4QovRlAZC2_mtL8Lq6-Mv7eCTkHpYtyIPE7gl5v5KvCIJXu2fKEmLVqEz-_AL9U2R882_5ThjHO2otXQvGFJNHb7Uq4Uca2FvODQPcwuA9ZFIhorHKwqsMQbjIQqH_ELIkNWfuGJJlEaWVFixG_LYaYXca4Q1RP1kQiK0aFBhlae06IxOa9k2RqfG458bsTUdafdU2oChBoC8nQjXD7ba7WLX7ClGJpMS9KQJCGjb6KmfsyXS4WqbN85Ahe96nTlvfyv9aW18aqcoP4uejK1183iLkehfVBgXQlGJhwA-aqMSV116ZuVWvz0-VKu8VECV_FVZlKuTbu3cONVQloOeYMPGBr6jCfo9onhj_v4T_ha_1TJkj5QJKjM9w8mPeXent4kixjzyuwOMnVX9R3YjoyukNFtYDStfTQAFPIqeChDszujlO19hSNrEaUjVVMWlmWlBa0F0WsQWBh1f-N_y1qsP0KTZeXHUt9YJgHUdU-WI4w_4B1RnYOuoT0Yi-scM0BN3SrQTRQhl3bVH5_QSVAxsxsyJG-1HeYmcS82oRnvrzEPQCaopd0oLvVnR84SRtzAHROtpnoULg5zXujEnmooTR0EFGVSq8ar-GlP-wb6GRZvpoU_XGQEMSfkuYWhWbk1kROFCt2u-qo8s547cLZydnlSsxi4zn_Ko7oeOKTOuqqeqir66M45waTrD5GPzMaZ7Gq_AsuhSGig1cJDr6X_Vceog_yGys9hhWmgNi030SO7f7ebeNaKjUO7LHQCuvn3-t9McsCJsdAMB8I-CeGSPSysmRvoCNKEPYxHcR-4DlOMSo0Bb6ROsW4FV4emDa_eyIdJno2Q7zDLNiF44VLGzEWXeCdDftBVjHLyjl4Qwv13ewhqsLUvpuNOAGVGFCM6Mr-eHbNaakA4jc-wgVEQnlroEHpEGDS1kAmr6XbIHnZl5rc1dW0TSiStcI4mjx3FeqpU8diU90CPe2Nn_DLI3NmCAYqZlFVHWCE-m866HGrdfWn2exl-rde_ifWrh9tJsJAgy6Dl3QbFNbKJrDQ_wE6vi2qcCZy_A0Ku_5AiNZ_asvIMSkx_vXsWbRbnSfWy76SqnnrHDlozBv46KgMF5F5Mab7I_a5UYEfXMUkkgAPi00zI1VDHOl11Ci0EMdDasN3H6bd5sW93VbS5VSFrk2CGJEO_6ajxz0YPBmd-KGv9A1PIUqe5uHfDPjjYT4Xg_X0o78Lk2-mxjqGn1KfVdOSjXov9jPxsBg_Rg_2mqPJnrroPnztT19gWfgdHaUL-9h6FtdzHCWMirnhz8mn-VskujX8j5LzL8DPcVnd-3PLrbW8c38jLI-SvPDIETu3sfdWnQcUwdgF-lK_bNAOQhxwpC--JWtjI0LXSLG_1H-o-8zfqf1LgT-I7-lJ-zEJeFRcWWAhHtFmyryDoHQIlw627Fdc4xL1BkmAn72GCTzPefsBvF9LN6h0dxuPL-QQ-vR1FeBan3GGuE4gcWzfxxQz_pjdJ_OEZidzSh7kwXVqGnPPGaRHb6K-i7IgMNJuIVV_pn4Qi-EfCrNrGxYktSKQ7jmBce7Zk-hpBm2uTaMRgf6fVwe5XnDpJt6NeDAEsY7mGWvMRfnC-6B2zJeYEPQ31Z0BPDOBtCgKU3Vc_iPozD1-RLJjiLURZlJSC1C9pTrGQLCULN4Y61vp0tCoo43ZIO_xQJe3OLKiXdvhgCvOHaJ_fdZIXaye51C0a-gyEb5shAB66X1jQlMKusfh3N2Ypq4fmnoweMe_XzjLkIcKGQfwX9ce42Gqsmc0CPYneR7S38m4civsJQGTcWhiCO-IhfU6tbsanw8xPQwaDu3RjEjO8iO_i6NEG8uTuqnWv-rY4PWZgJCM12McWRUPNoW03pJg-YJt1moRag9lhTjoEsetawMCNhQxTEUCCBfhq5GYMBtdnp-RfcQdbcZwTs3QPMvMt8cLPKxMfTL08cqoUsuXz2SPVaqzZIiMVkTNZELQyoGHhzpkrxrgr0BlAfkyPu331UCrnQeCVAxxvldyB-soms7PngVolOYYiwGgq9NTnEW6_QvC3Eyc4eBS6Z6JZZdm4c_TbaLjLKl8HGe3WsftCSDXw3_cCc3wXdkc3VWyN30oKsnMZDxN6FaLv5vk0VIMmNq8SqjTRakdHxPG_jxaWLVzx1t4tbRJs",
     ".AspNetCore.Antiforgery.xxx": "CfDJ8HR2AoMI3LpApkZfZPiNaiYkj2y24ik2dmUocCjoCkPoRW97wBP99i7jxtcbPzwouhXVQzauklzPDdMy6SbAO3YJw2NA1qDi_NLCl2gP6P-_V13i-I6CMeNQe9dlEURgH-mEq8_acj54wn2SDjr4BL4",  
     "visitorId_current": "3755893760"
 }
+# ==============================
+# إعدادات أساسية
+# ==============================
+URL = "https://algeria.blsspainglobal.com/DZA/Bls/DoorstepForm?data=jGXVePEEnGHbQ7or54PE2gTGNteC2SFNKiG75D6xihL95QxOiXyJtV%2BskgdVaNVJAN5TxPxMN2O8LAoGDNnCG2jyV%2BxNN1hjlUekjDCFCiCkUWHqU1V05w%2FhhQ98Lk8cJov7PtQ%2BP85MBRMcNfgOGGnRY%2F3sGUna0cYnbSKH7nQds1xjkO61bR1vZ3sksitYuoqpa39keraLxFhPcoGszg%3D%3D"
 
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+# headers يشبهو كروم
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.9,fr;q=0.8,ar;q=0.7",
-    "Referer": "https://algeria.blsspainglobal.com/",
     "Connection": "keep-alive",
+    "Referer": "https://algeria.blsspainglobal.com/",
     "Upgrade-Insecure-Requests": "1",
 }
 
-url = "https://algeria.blsspainglobal.com/DZA/Bls/DoorstepForm?data=jGXVePEEnGHbQ7or54PE2gTGNteC2SFNKiG75D6xihL95QxOiXyJtV%2BskgdVaNVJAN5TxPxMN2O8LAoGDNnCG2jyV%2BxNN1hjlUekjDCFCiCkUWHqU1V05w%2FhhQ98Lk8cJov7PtQ%2BP85MBRMcNfgOGGnRY%2F3sGUna0cYnbSKH7nQds1xjkO61bR1vZ3sksitYuoqpa39keraLxFhPcoGszg%3D%3D"
+# ==============================
+# المراقبة
+# ==============================
+def check_slots():
+    try:
+        r = requests.get(URL, headers=HEADERS, cookies=COOKIES, timeout=15)
+        print("Status:", r.status_code)
 
-resp = requests.get(url, cookies=cookies, headers=headers)
+        if r.status_code == 200:
+            html = r.text
+            if "Currently, no slots are available" in html:
+                print("🔴 لا توجد مواعيد متاحة حالياً")
+            else:
+                print("🟢 ربما هناك مواعيد! تحقق من الصفحة")
+                print(html[:500])  # نطبع أول 500 كاراكتر للفحص
+        elif r.status_code == 403:
+            print("🚫 Forbidden (403) → الكوكيز ممكن منتهية أو Cloudflare صدنا")
+        else:
+            print("⚠️ Error:", r.status_code)
 
-print("Status:", resp.status_code)
-print("URL النهائي:", resp.url)
-print("------ HTML Response ------")
-print(resp.text[:1000])
+    except Exception as e:
+        print("❌ Exception:", e)
 
+
+# ==============================
+# حلقة تشغيل كل دقيقتين
+# ==============================
+if __name__ == "__main__":
+    while True:
+        check_slots()
+        time.sleep(120)  # كل دقيقتين
