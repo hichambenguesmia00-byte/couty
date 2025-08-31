@@ -10,7 +10,7 @@ def home():
 @app.route("/check")
 def check_slots():
     # رابط المواعيد (بدله باللي عندك)
-    url = "https://algeria.blsspainglobal.com/DZA/Bls/DoorstepForm?data=..."
+    url = "https://algeria.blsspainglobal.com/dza/home/index"
 
     # هنا ضيف الكوكيز يدوي (مثال فقط)
     cookies = {
