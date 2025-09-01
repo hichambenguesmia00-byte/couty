@@ -2,7 +2,7 @@ import os
 import requests
 from flask import Flask
 from telegram.ext import Updater, CommandHandler
-import imghdr_py as imghdr
+
 
 # متغيرات عامة
 COOKIES = {}
