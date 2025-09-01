@@ -1,8 +1,7 @@
 import os
 import requests
 from flask import Flask
-from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import Application, CommandHandler
 
 # متغيرات عامة
 COOKIES = {}
@@ -32,13 +31,13 @@ def check_appointments():
         return False
 
 # بوت تليغرام
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start(update, context):
     await update.message.reply_text("✅ البوت راه يخدم!")
 
-async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def ping(update, context):
     await update.message.reply_text("✅ السيرفر شغال!")
 
-async def setcookies(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def setcookies(update, context):
     global COOKIES
     try:
         cookie_text = " ".join(context.args)
@@ -51,7 +50,7 @@ async def setcookies(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ خطأ: {e}")
 
-async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def check(update, context):
     if check_appointments():
         await context.bot.send_message(chat_id=CHAT_ID, text="🚨 مواعيد مفتوحة!")
     else:
