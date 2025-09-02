@@ -10,10 +10,6 @@ CHAT_ID = os.environ.get("CHAT_ID")      # رقمك في تليغرام
 URL = "https://algeria.blsspainglobal.com/DZA/Appointment/NewAppointment?msg=..."  # حط الرابط الصحيح
 
 app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return "Bot is running!"
     
 # وظيفة تحقق من الموقع
 def check_appointments():
