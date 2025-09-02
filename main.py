@@ -11,6 +11,10 @@ URL = "https://algeria.blsspainglobal.com/DZA/Appointment/NewAppointment?msg=...
 
 app = Flask(__name__)
 
+@app.route("/")
+def home():
+    return "Bot is running!"
+    
 # وظيفة تحقق من الموقع
 def check_appointments():
     global COOKIES
@@ -74,3 +78,12 @@ def home():
 
 if __name__ == "__main__":
     run_bot()
+
+if __name__ == "__main__":
+    import threading
+    # نشغل البوت في Thread
+    threading.Thread(target=run_bot).start()
+    # نشغل Flask (يلزم Render يسمع بورت)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
