@@ -38,15 +38,23 @@ def ping(update, context):
 def setcookies(update, context):
     global COOKIES
     try:
-        cookie_text = " ".join(context.args)
+        # نجيب النص كامل بعد الكوموند (حتى لو فيه سطور متعددة)
+        cookie_text = update.message.text.replace("/setcookies", "", 1).strip()
+        
         new_cookies = {}
-        for c in cookie_text.split():
-            k, v = c.split("=")
-            new_cookies[k.strip()] = v.strip()
-        COOKIES = new_cookies
-        update.message.reply_text("✅ كوكيز تبدل!")
+        for line in cookie_text.splitlines():
+            if "=" in line:
+                k, v = line.split("=", 1)  # نقطع غير أول "="
+                new_cookies[k.strip()] = v.strip()
+        
+        if new_cookies:
+            COOKIES = new_cookies
+            update.message.reply_text("✅ تم تحديث الكوكيز:\n" + "\n".join([f"{k}=..." for k in COOKIES.keys()]))
+        else:
+            update.message.reply_text("⚠️ ما لقيتش أي كوكيز في النص!")
     except Exception as e:
         update.message.reply_text(f"❌ خطأ: {e}")
+
 
 def check(update, context):
     if check_appointments():
