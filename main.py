@@ -96,11 +96,11 @@ def run_bot():
     dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("setcookies", setcookies))
     dp.add_handler(CommandHandler("check", check))
+    dp.add_handler(CommandHandler("checkcookies", checkcookies))  # ✅ زيد هذي
     updater.start_polling()
     updater.idle()
-# باش تزيد الكوموند للبوت
-def register_handlers(dispatcher):
-    dispatcher.add_handler(CommandHandler("checkcookies", checkcookies))
+
+
 # -------- Route Flask --------
 @app.route("/")
 def home():
