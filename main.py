@@ -77,16 +77,18 @@ def checkcookies(update: Update, context: CallbackContext):
             # تحقق من كلمة في الصفحة تدل على نجاح الدخول
             if "مرحبا" in resp.text or "Welcome" in resp.text:
                 update.message.reply_text("✅ الكوكيز صالح والدخول للصفحة نجح.")
+                 update.message.reply_text("🔎 جزء من الصفحة:\n" + resp.text[:200])
             else:
                 update.message.reply_text("⚠️ دخل للصفحة بصح المحتوى ما يبينش باللي صالح.")
         elif resp.status_code in (401, 403):
             update.message.reply_text("❌ انتهت صلاحية الكوكيز. لازم تدخل كوكيز جديد.")
+             update.message.reply_text("🔎 جزء من الصفحة:\n" + resp.text[:200])
         else:
             update.message.reply_text(f"❌ خطأ: status code = {resp.status_code}")
 
     except Exception as e:
         update.message.reply_text(f"⚠️ خطأ في الاتصال: {str(e)}")
-        update.message.reply_text("🔎 جزء من الصفحة:\n" + resp.text[:200])
+        
 
 # -------- تشغيل البوت في Thread --------
 def run_bot():
