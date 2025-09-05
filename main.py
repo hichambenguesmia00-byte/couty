@@ -69,25 +69,26 @@ def checkcookies(update: Update, context: CallbackContext):
         update.message.reply_text("⚠️ ما عندكش كوكيز مخزنين. استعمل /setcookies باش تزيدهم.")
         return
 
-    url = "https://algeria.blsspainglobal.com/DZA/Appointment/NewAppointment?msg=ZokWWxtCWRl2wwydQeR8iMSec%2BFRGm9yoFAG67YF%2FE46MHPKOT4E5B42DNnLtDwr&d=vIl4VHDNjFut2gxJov6ucTev%2Fo864siLsWLuqQOrNmjX70CyvfreOCQkRSP3l98sKS85uaee%2B6ZgvWphouiemjMKWOmpGRJuLnOETWreviSyKxWcXudgMEZduaH%2FCiiiyTH%2Fni8F9z1i9gJBfdIy5LaaF0xP%2F9ZYmO0Qv1i6bKv90KpYGr6tXxH28U955kWbvK9W9fraA98ON3bl%2BHuHr2GOMHOQ1BhqHg5LhvxmxEBfpoZ5XanOcHypferontrbLmKZYSycAWdU3xd%2BjyfXjs0pGgL%2BftFlczaOfLYOMSm6SsqBo086dTopNJNlBJqC"  # 🔴 هنا حط رابط الصفحة لي لازم تتحقق منها
+    url = "https://algeria.blsspainglobal.com/DZA/Appointment/NewAppointment?msg=ZokWWxtCWRl2wwydQeR8iMSec%2BFRGm9yoFAG67YF%2FE46MHPKOT4E5B42DNnLtDwr&d=vIl4VHDNjFut2gxJov6ucTev%2Fo864siLsWLuqQOrNmjX70CyvfreOCQkRSP3l98sKS85uaee%2B6ZgvWphouiemjMKWOmpGRJuLnOETWreviSyKxWcXudgMEZduaH%2FCiiiyTH%2Fni8F9z1i9gJBfdIy5LaaF0xP%2F9ZYmO0Qv1i6bKv90KpYGr6tXxH28U955kWbvK9W9fraA98ON3bl%2BHuHr2GOMHOQ1BhqHg5LhvxmxEBfpoZ5XanOcHypferontrbLmKZYSycAWdU3xd%2BjyfXjs0pGgL%2BftFlczaOfLYOMSm6SsqBo086dTopNJNlBJqC"
     try:
         resp = requests.get(url, cookies=COOKIES, timeout=10)
 
         if resp.status_code == 200:
-            # تحقق من كلمة في الصفحة تدل على نجاح الدخول
             if "مرحبا" in resp.text or "Welcome" in resp.text:
                 update.message.reply_text("✅ الكوكيز صالح والدخول للصفحة نجح.")
-                 update.message.reply_text("🔎 جزء من الصفحة:\n" + resp.text[:200])
             else:
                 update.message.reply_text("⚠️ دخل للصفحة بصح المحتوى ما يبينش باللي صالح.")
+            # نطبعلك جزء من الصفحة باش تتأكد
+            update.message.reply_text("🔎 جزء من الصفحة:\n" + resp.text[:200])
+
         elif resp.status_code in (401, 403):
             update.message.reply_text("❌ انتهت صلاحية الكوكيز. لازم تدخل كوكيز جديد.")
-             update.message.reply_text("🔎 جزء من الصفحة:\n" + resp.text[:200])
         else:
             update.message.reply_text(f"❌ خطأ: status code = {resp.status_code}")
 
     except Exception as e:
         update.message.reply_text(f"⚠️ خطأ في الاتصال: {str(e)}")
+
         
 
 # -------- تشغيل البوت في Thread --------
