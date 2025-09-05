@@ -49,10 +49,13 @@ def setcookies(update, context):
                 new_cookies[k.strip()] = v.strip()
         
         if new_cookies:
+            # نمسح القديم ونخزن الجديد فقط
             COOKIES = new_cookies
-            update.message.reply_text("✅ تم تحديث الكوكيز:\n" + "\n".join([f"{k}=..." for k in COOKIES.keys()]))
+            saved = "\n".join([f"{k}=..." for k in COOKIES.keys()])
+            update.message.reply_text(f"✅ تم تخزين الكوكيز الجديد (تم مسح القديم):\n{saved}")
         else:
             update.message.reply_text("⚠️ ما لقيتش أي كوكيز في النص!")
+
     except Exception as e:
         update.message.reply_text(f"❌ خطأ: {e}")
 
@@ -70,21 +73,31 @@ def checkcookies(update: Update, context: CallbackContext):
         return
 
     url = "https://algeria.blsspainglobal.com/DZA/Appointment/NewAppointment?msg=ZokWWxtCWRl2wwydQeR8iMSec%2BFRGm9yoFAG67YF%2FE46MHPKOT4E5B42DNnLtDwr&d=vIl4VHDNjFut2gxJov6ucTev%2Fo864siLsWLuqQOrNmjX70CyvfreOCQkRSP3l98sKS85uaee%2B6ZgvWphouiemjMKWOmpGRJuLnOETWreviSyKxWcXudgMEZduaH%2FCiiiyTH%2Fni8F9z1i9gJBfdIy5LaaF0xP%2F9ZYmO0Qv1i6bKv90KpYGr6tXxH28U955kWbvK9W9fraA98ON3bl%2BHuHr2GOMHOQ1BhqHg5LhvxmxEBfpoZ5XanOcHypferontrbLmKZYSycAWdU3xd%2BjyfXjs0pGgL%2BftFlczaOfLYOMSm6SsqBo086dTopNJNlBJqC"
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36",
+        "Referer": "https://algeria.blsspainglobal.com/",
+        "Accept-Language": "en-US,en;q=0.9,ar;q=0.8"
+    }
+
     try:
-        resp = requests.get(url, cookies=COOKIES, timeout=10)
+        resp = requests.get(url, cookies=COOKIES, headers=headers, timeout=10, allow_redirects=False)
 
-        if resp.status_code == 200:
-            if "مرحبا" in resp.text or "Welcome" in resp.text:
-                update.message.reply_text("✅ الكوكيز صالح والدخول للصفحة نجح.")
-            else:
-                update.message.reply_text("⚠️ دخل للصفحة بصح المحتوى ما يبينش باللي صالح.")
-            # نطبعلك جزء من الصفحة باش تتأكد
-            update.message.reply_text("🔎 جزء من الصفحة:\n" + resp.text[:200])
-
+        msg = f"📡 Status code: {resp.status_code}\n"
+        if "مرحبا" in resp.text or "Welcome" in resp.text:
+            msg += "✅ الكوكيز صالح والدخول للصفحة نجح.\n"
         elif resp.status_code in (401, 403):
-            update.message.reply_text("❌ انتهت صلاحية الكوكيز. لازم تدخل كوكيز جديد.")
+            msg += "❌ انتهت صلاحية الكوكيز.\n"
+        elif 300 <= resp.status_code < 400:
+            msg += f"↪️ السيرفر رد redirect -> {resp.headers.get('Location')}\n"
         else:
-            update.message.reply_text(f"❌ خطأ: status code = {resp.status_code}")
+            msg += "⚠️ الرد ما يبينش أنه صالح.\n"
+
+        # نزيد جزء من المحتوى باش تبان الصورة
+        snippet = resp.text[:200].replace("\n", " ")
+        msg += f"\n🔎 جزء من الصفحة:\n{snippet}"
+
+        update.message.reply_text(msg)
 
     except Exception as e:
         update.message.reply_text(f"⚠️ خطأ في الاتصال: {str(e)}")
