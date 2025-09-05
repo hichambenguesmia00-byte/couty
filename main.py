@@ -81,19 +81,23 @@ def checkcookies(update: Update, context: CallbackContext):
     }
 
     try:
-        resp = requests.get(url, cookies=COOKIES, headers=headers, timeout=10, allow_redirects=False)
+        resp = requests.get(url, cookies=COOKIES, headers=headers, timeout=15)
 
         msg = f"📡 Status code: {resp.status_code}\n"
-        if "مرحبا" in resp.text or "Welcome" in resp.text:
-            msg += "✅ الكوكيز صالح والدخول للصفحة نجح.\n"
-        elif resp.status_code in (401, 403):
-            msg += "❌ انتهت صلاحية الكوكيز.\n"
-        elif 300 <= resp.status_code < 400:
-            msg += f"↪️ السيرفر رد redirect -> {resp.headers.get('Location')}\n"
-        else:
-            msg += "⚠️ الرد ما يبينش أنه صالح.\n"
 
-        # نزيد جزء من المحتوى باش تبان الصورة
+        if resp.status_code == 200:
+            if "New Appointment" in resp.text or "Appointment" in resp.text:
+                msg += "✅ الكوكيز صالح والدخول للصفحة نجح.\n"
+            else:
+                msg += "⚠️ دخل للصفحة بصح المحتوى ما يبينش مواعيد.\n"
+        elif resp.status_code in (401, 403):
+            msg += "❌ انتهت صلاحية الكوكيز (Access Denied).\n"
+        elif 300 <= resp.status_code < 400:
+            msg += f"↪️ السيرفر رد Redirect -> {resp.headers.get('Location')}\n"
+        else:
+            msg += "⚠️ الرد غير متوقع.\n"
+
+        # جزء من الصفحة باش تشوف بعينك
         snippet = resp.text[:200].replace("\n", " ")
         msg += f"\n🔎 جزء من الصفحة:\n{snippet}"
 
