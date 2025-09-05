@@ -86,6 +86,7 @@ def checkcookies(update: Update, context: CallbackContext):
 
     except Exception as e:
         update.message.reply_text(f"⚠️ خطأ في الاتصال: {str(e)}")
+        update.message.reply_text("🔎 جزء من الصفحة:\n" + resp.text[:200])
 
 # -------- تشغيل البوت في Thread --------
 def run_bot():
