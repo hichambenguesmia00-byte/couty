@@ -1,0 +1,9 @@
+import json
+
+def load_cookies():
+    try:
+        with open("cookies.json", "r", encoding="utf-8") as f:
+            cookies_list = json.load(f)
+            return {c['name']: c['value'] for c in cookies_list}
+    except:
+        return {}
