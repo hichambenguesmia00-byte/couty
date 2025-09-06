@@ -2,6 +2,6 @@ services:
   - type: web
     name: flask-demo
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && playwright install chromium
     startCommand: python main.py
     plan: free
