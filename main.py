@@ -4,7 +4,8 @@ import requests
 from flask import Flask
 from telegram import Update
 from telegram.ext import Updater,CommandHandler, CallbackContext
-
+import asyncio
+from playwright.async_api import async_playwright
 # متغيرات
 COOKIES = {}
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
@@ -123,6 +124,30 @@ def probe(update: Update, context: CallbackContext):
 
     except Exception as e:
         update.message.reply_text(f"⚠️ خطأ: {e}")
+# -----------------------------------------
+
+async def fetch_cookies():
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        page = await browser.new_page()
+
+        # روح للصفحة الرئيسية
+        await page.goto("https://algeria.blsspainglobal.com/")
+
+        # إذا لازم login أو قبول شروط، ديرها هنا
+
+        cookies = await page.context.cookies()
+        await browser.close()
+
+        # نخزن الكوكيز في ملف
+        with open("cookies.json", "w", encoding="utf-8") as f:
+            import json
+            json.dump(cookies, f, ensure_ascii=False, indent=2)
+
+        print("✅ Cookies saved to cookies.json")
+
+if __name__ == "__main__":
+    asyncio.run(fetch_cookies())
 
 
 # -------- تشغيل البوت في Thread --------
