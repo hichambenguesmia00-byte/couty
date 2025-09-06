@@ -72,7 +72,7 @@ def checkcookies(update: Update, context: CallbackContext):
         update.message.reply_text("⚠️ ما عندكش كوكيز مخزنين. استعمل /setcookies باش تزيدهم.")
         return
 
-    url = "https://algeria.blsspainglobal.com/DZA/Appointment/NewAppointment?msg=ZokWWxtCWRl2wwydQeR8iMSec%2BFRGm9yoFAG67YF%2FE46MHPKOT4E5B42DNnLtDwr&d=vIl4VHDNjFut2gxJov6ucTev%2Fo864siLsWLuqQOrNmjX70CyvfreOCQkRSP3l98sKS85uaee%2B6ZgvWphouiemjMKWOmpGRJuLnOETWreviSyKxWcXudgMEZduaH%2FCiiiyTH%2Fni8F9z1i9gJBfdIy5LaaF0xP%2F9ZYmO0Qv1i6bKv90KpYGr6tXxH28U955kWbvK9W9fraA98ON3bl%2BHuHr2GOMHOQ1BhqHg5LhvxmxEBfpoZ5XanOcHypferontrbLmKZYSycAWdU3xd%2BjyfXjs0pGgL%2BftFlczaOfLYOMSm6SsqBo086dTopNJNlBJqC"
+    url = "https://algeria.blsspainglobal.com/DZA/Appointment/NewAppointment"
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36",
@@ -83,10 +83,18 @@ def checkcookies(update: Update, context: CallbackContext):
     try:
         resp = requests.get(url, cookies=COOKIES, headers=headers, timeout=15)
 
+        # طباعة Debug في السيرفر (ما يبانش في تيليغرام)
+        print("=== DEBUG ===")
+        print("📌 Cookies sent:", COOKIES)
+        print("📌 Headers sent:", headers)
+        print("📌 Status:", resp.status_code)
+        print("📌 First 300 chars:", resp.text[:300])
+        print("==============")
+
         msg = f"📡 Status code: {resp.status_code}\n"
 
         if resp.status_code == 200:
-            if "New Appointment" in resp.text or "Appointment" in resp.text:
+            if "Appointment" in resp.text:
                 msg += "✅ الكوكيز صالح والدخول للصفحة نجح.\n"
             else:
                 msg += "⚠️ دخل للصفحة بصح المحتوى ما يبينش مواعيد.\n"
@@ -97,7 +105,6 @@ def checkcookies(update: Update, context: CallbackContext):
         else:
             msg += "⚠️ الرد غير متوقع.\n"
 
-        # جزء من الصفحة باش تشوف بعينك
         snippet = resp.text[:200].replace("\n", " ")
         msg += f"\n🔎 جزء من الصفحة:\n{snippet}"
 
