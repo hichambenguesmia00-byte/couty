@@ -67,53 +67,63 @@ def check(update, context):
         update.message.reply_text("⏳ مازال مكاينش.")
 
 
-def checkcookies(update: Update, context: CallbackContext):
+def probe(update: Update, context: CallbackContext):
     if not COOKIES:
-        update.message.reply_text("⚠️ ما عندكش كوكيز مخزنين. استعمل /setcookies باش تزيدهم.")
+        update.message.reply_text("⚠️ ما كاش كوكيز مخزّنين. استعمل /setcookies باش تزيدهم.")
         return
 
-    url = "https://algeria.blsspainglobal.com/DZA/Appointment/NewAppointment"
-
-    headers = {
+    session = requests.Session()
+    # هيدرز “واقعية” (تبان كيما كروم)
+    session.headers.update({
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9,ar;q=0.8",
         "Referer": "https://algeria.blsspainglobal.com/",
-        "Accept-Language": "en-US,en;q=0.9,ar;q=0.8"
-    }
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+    })
+    # زيد الكوكيز اللي عطيتهم
+    try:
+        session.cookies.update(COOKIES)
+    except Exception as e:
+        update.message.reply_text(f"❌ مشكل في parsing الكوكيز: {e}")
+        return
+
+    home = "https://algeria.blsspainglobal.com/"
+    target = "https://algeria.blsspainglobal.com/DZA/Appointment/NewAppointment?msg=ZokWWxtCWRl2wwydQeR8iMSec%2BFRGm9yoFAG67YF%2FE46MHPKOT4E5B42DNnLtDwr&d=vIl4VHDNjFut2gxJov6ucTev%2Fo864siLsWLuqQOrNmjX70CyvfreOCQkRSP3l98sKS85uaee%2B6ZgvWphouiemjMKWOmpGRJuLnOETWreviSyKxWcXudgMEZduaH%2FCiiiyTH%2Fni8F9z1i9gJBfdIy5LaaF0xP%2F9ZYmO0Qv1i6bKv90KpYGr6tXxH28U955kWbvK9W9fraA98ON3bl%2BHuHr2GOMHOQ1BhqHg5LhvxmxEBfpoZ5XanOcHypferontrbLmKZYSycAWdU3xd%2BjyfXjs0pGgL%2BftFlczaOfLYOMSm6SsqBo086dTopNJNlBJqC"
 
     try:
-        resp = requests.get(url, cookies=COOKIES, headers=headers, timeout=15)
+        # خطوة 1: ديما جرّب الصفحة الرئيسية (بزاف مواقع تحط set-cookie هنا)
+        r1 = session.get(home, timeout=20, allow_redirects=True)
+        set_from_home = [c.name for c in session.cookies]
 
-        # طباعة Debug في السيرفر (ما يبانش في تيليغرام)
-        print("=== DEBUG ===")
-        print("📌 Cookies sent:", COOKIES)
-        print("📌 Headers sent:", headers)
-        print("📌 Status:", resp.status_code)
-        print("📌 First 300 chars:", resp.text[:300])
-        print("==============")
+        # خطوة 2: الهدف
+        r2 = session.get(target, timeout=20, allow_redirects=False)
 
-        msg = f"📡 Status code: {resp.status_code}\n"
-
-        if resp.status_code == 200:
-            if "Appointment" in resp.text:
-                msg += "✅ الكوكيز صالح والدخول للصفحة نجح.\n"
-            else:
-                msg += "⚠️ دخل للصفحة بصح المحتوى ما يبينش مواعيد.\n"
-        elif resp.status_code in (401, 403):
-            msg += "❌ انتهت صلاحية الكوكيز (Access Denied).\n"
-        elif 300 <= resp.status_code < 400:
-            msg += f"↪️ السيرفر رد Redirect -> {resp.headers.get('Location')}\n"
+        snippet = r2.text[:300].replace("\n", " ")
+        msg = (
+            "=== PROBE ===\n"
+            f"🏠 HOME: {r1.status_code} -> {r1.url}\n"
+            f"🍪 Cookies after HOME: {', '.join(set_from_home) or '(none)'}\n"
+            f"🎯 TARGET: {r2.status_code}\n"
+        )
+        if r2.is_redirect:
+            msg += f"↪️ Redirect to: {r2.headers.get('Location')}\n"
+        if r2.status_code in (401, 403):
+            msg += "❌ مرفوض (غالبًا IP/Token مرتبط بالجلسة الأصلية).\n"
+        elif "Access Denied" in r2.text or "403" in snippet:
+            msg += "❌ Access Denied من الـ WAF.\n"
+        elif "Currently, no slots are available" in r2.text:
+            msg += "✅ وصلت للصفحة: ما كاش مواعيد حالياً.\n"
         else:
-            msg += "⚠️ الرد غير متوقع.\n"
+            msg += "ℹ️ وصلنا رد مختلف، شوف الـ snippet.\n"
 
-        snippet = resp.text[:200].replace("\n", " ")
-        msg += f"\n🔎 جزء من الصفحة:\n{snippet}"
-
-        update.message.reply_text(msg)
+        msg += f"\n🔎 Snippet: {snippet}"
+        update.message.reply_text(msg[:4000])
 
     except Exception as e:
-        update.message.reply_text(f"⚠️ خطأ في الاتصال: {str(e)}")
+        update.message.reply_text(f"⚠️ خطأ: {e}")
 
-        
 
 # -------- تشغيل البوت في Thread --------
 def run_bot():
@@ -123,7 +133,8 @@ def run_bot():
     dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("setcookies", setcookies))
     dp.add_handler(CommandHandler("check", check))
-    dp.add_handler(CommandHandler("checkcookies", checkcookies))  # ✅ زيد هذي
+    dp.add_handler(CommandHandler("probe", probe))
+
     updater.start_polling()
     updater.idle()
 
